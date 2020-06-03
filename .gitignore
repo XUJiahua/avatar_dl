@@ -1,0 +1,8 @@
+*.csv
+*.log
+*.txt
+.DS_Store
+.idea
+download
+bin
+/avatar_dl
