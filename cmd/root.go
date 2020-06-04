@@ -20,18 +20,17 @@ import (
 	"avatar_dl/producer"
 	"avatar_dl/util"
 	"fmt"
-	homedir "github.com/mitchellh/go-homedir"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"os"
 )
 
-var cfgFile string
 var logFilename string
 var inputFilename string
 var failureFilename string
 var downloadFolderName string
+var workers int
+var verbose bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -40,7 +39,13 @@ var rootCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		defer util.Elapsed()
+		if verbose {
+			logrus.SetLevel(logrus.DebugLevel)
+		} else {
+			logrus.SetLevel(logrus.InfoLevel)
+		}
+
+		defer util.Elapsed()()
 
 		file, err := os.OpenFile(logFilename, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 		if err != nil {
@@ -48,7 +53,7 @@ var rootCmd = &cobra.Command{
 		}
 		logrus.SetOutput(file)
 
-		producer.New(inputFilename, "failure_uris.txt").Do(consumer.New(downloadFolderName), 10)
+		producer.New(inputFilename, "failure_uris.txt").Do(consumer.New(downloadFolderName), workers)
 	},
 }
 
@@ -62,45 +67,10 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
-
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.avatar_dl.yaml)")
 	rootCmd.PersistentFlags().StringVarP(&logFilename, "logFilename", "l", "logrus.log", "")
 	rootCmd.PersistentFlags().StringVarP(&inputFilename, "inputFilename", "i", "sample100.csv", "")
 	rootCmd.PersistentFlags().StringVarP(&failureFilename, "failureFilename", "f", "failure_uris.txt", "")
 	rootCmd.PersistentFlags().StringVarP(&downloadFolderName, "downloadFolderName", "d", "./download", "")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-}
-
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		// Search config in home directory with name ".avatar_dl" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".avatar_dl")
-	}
-
-	viper.AutomaticEnv() // read in environment variables that match
-
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
-	}
+	rootCmd.PersistentFlags().IntVarP(&workers, "workers", "w", 10, "")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "")
 }

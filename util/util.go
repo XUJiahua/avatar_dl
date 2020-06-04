@@ -1,13 +1,13 @@
 package util
 
 import (
-	"github.com/sirupsen/logrus"
+	"fmt"
 	"time"
 )
 
 func Elapsed() func() {
 	start := time.Now()
 	return func() {
-		logrus.Infof("%s took \n", time.Since(start))
+		fmt.Printf("time elapsed: %s \n", time.Since(start))
 	}
 }
