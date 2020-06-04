@@ -28,6 +28,10 @@ func New(downloadFolder string) *Consumer {
 
 // task
 func (c *Consumer) Do(uri string) error {
+	if uri == "" || uri == "NULL" {
+		return nil
+	}
+
 	targetFilename := path.Join(c.downloadFolder, genFilename(uri))
 
 	if fileExists(targetFilename) {

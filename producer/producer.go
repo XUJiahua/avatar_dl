@@ -68,10 +68,8 @@ func (p Producer) Do(consumer *consumer.Consumer, workers int) {
 		workersCh <- 1
 		// worker goroutine
 		go func(uri string, ch chan int) {
-			if uri != "" {
-				if err := consumer.Do(uri); err != nil {
-					failedQueue <- uri
-				}
+			if err := consumer.Do(uri); err != nil {
+				failedQueue <- uri
 			}
 
 			// mark as complete
