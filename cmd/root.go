@@ -68,7 +68,7 @@ func Execute() {
 
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&logFilename, "logFilename", "l", "logrus.log", "")
-	rootCmd.PersistentFlags().StringVarP(&inputFilename, "inputFilename", "i", "sample100.csv", "")
+	rootCmd.PersistentFlags().StringVarP(&inputFilename, "inputFilename", "i", "sample10.csv", "")
 	rootCmd.PersistentFlags().StringVarP(&failureFilename, "failureFilename", "f", "failure_uris.txt", "")
 	rootCmd.PersistentFlags().StringVarP(&downloadFolderName, "downloadFolderName", "d", "./download", "")
 	rootCmd.PersistentFlags().IntVarP(&workers, "workers", "w", 10, "")

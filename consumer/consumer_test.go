@@ -8,3 +8,7 @@ func TestConsumer_Do(t *testing.T) {
 		t.Log(err)
 	}
 }
+
+func Test_genFilename(t *testing.T) {
+	t.Log(genFilename("http://thirdwx.qlogo.cn/mmopen/a4d6EO3X4ZVFRwRlWLMDRLU8icwnNIEv7VD5YbhALn5enOjoPxRBeJtXkQ321cSu6JpjamkQkpsTBY3o1QXPmVkoaGFGLucyia/132"))
+}

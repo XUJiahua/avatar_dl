@@ -28,7 +28,8 @@ func New(downloadFolder string) *Consumer {
 
 // task
 func (c *Consumer) Do(uri string) error {
-	if uri == "" || uri == "NULL" {
+	// TODO: block list
+	if uri == "" || uri == "NULL" || uri == "\"\"" {
 		return nil
 	}
 
